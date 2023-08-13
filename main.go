@@ -19,7 +19,7 @@ var students []Student
 var student Student
 
 func rootHandler(ctx iris.Context) {
-	ctx.JSON(context.Map{"message": "welcome to CURD service"})
+	ctx.JSON(context.Map{"message": "welcome to CRUD service"})
 }
 
 func getStudents(ctx iris.Context) {
@@ -52,12 +52,15 @@ func createStudent(ctx iris.Context) {
 }
 
 func updateStudent(ctx iris.Context) {
+	//get id
 	params, err := strconv.Atoi(ctx.Params().Get("id"))
+	//get student name
 	_ = ctx.ReadJSON(&student)
 	if err != nil {
 		ctx.JSON(context.Map{"message": "ERROR"})
 		return
 	}
+	//update the name
 	for index, item := range students {
 		if params == item.ID {
 			students[index].Name = student.Name
@@ -72,6 +75,7 @@ func deleteStudent(ctx iris.Context) {
 		ctx.JSON(context.Map{"message": "ERROR"})
 		return
 	}
+	//find out and delete
 	for index, item := range students {
 		if item.ID == params {
 			students = append(students[:index], students[index+1:]...)
@@ -79,11 +83,14 @@ func deleteStudent(ctx iris.Context) {
 		}
 	}
 }
+
 func main() {
 	app := iris.New()
 	app.Use(recover.New())
 	app.Use(logger.New())
 	app.Logger().SetLevel("debug")
+
+	//set original data
 	students = append(students, Student{ID: 1, Name: "Train"})
 	students = append(students, Student{ID: 2, Name: "Todd"})
 
